@@ -7,9 +7,9 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-} from "./ui/dialog";
-import { Button } from "./ui/button";
-import { Input } from "./ui/input";
+} from "../ui/dialog";
+import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 import {
   Form,
   FormField,
@@ -17,9 +17,9 @@ import {
   FormLabel,
   FormControl,
   FormMessage,
-} from "./ui/form";
+} from "../ui/form";
 import { toast } from "sonner";
-import { createCustomer } from "../../services/customersApi";
+import { createCustomer } from "../../../services/customersApi";
 
 export interface AddCustomerFormValues {
   name: string;
@@ -92,7 +92,10 @@ export function AddCustomerDialog({
               <FormField
                 control={form.control}
                 name="name"
-                rules={{ required: "First name is required", minLength: { value: 2, message: "Minimum 2 characters" } }}
+                rules={{
+                  required: "First name is required",
+                  minLength: { value: 2, message: "Minimum 2 characters" },
+                }}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>First Name</FormLabel>
@@ -106,7 +109,10 @@ export function AddCustomerDialog({
               <FormField
                 control={form.control}
                 name="lastName"
-                rules={{ required: "Last name is required", minLength: { value: 2, message: "Minimum 2 characters" } }}
+                rules={{
+                  required: "Last name is required",
+                  minLength: { value: 2, message: "Minimum 2 characters" },
+                }}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Last Name</FormLabel>
@@ -120,7 +126,13 @@ export function AddCustomerDialog({
               <FormField
                 control={form.control}
                 name="email"
-                rules={{ required: "Email is required", pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: "Invalid email address" } }}
+                rules={{
+                  required: "Email is required",
+                  pattern: {
+                    value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                    message: "Invalid email address",
+                  },
+                }}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Email</FormLabel>
@@ -138,7 +150,13 @@ export function AddCustomerDialog({
               <FormField
                 control={form.control}
                 name="phone"
-                rules={{ required: "Phone is required", pattern: { value: /^[0-9]{10,}$/, message: "Phone must be at least 10 digits" } }}
+                rules={{
+                  required: "Phone is required",
+                  pattern: {
+                    value: /^[0-9]{10,}$/,
+                    message: "Phone must be at least 10 digits",
+                  },
+                }}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Phone</FormLabel>
@@ -152,7 +170,10 @@ export function AddCustomerDialog({
               <FormField
                 control={form.control}
                 name="city"
-                rules={{ required: "City is required", minLength: { value: 2, message: "Minimum 2 characters" } }}
+                rules={{
+                  required: "City is required",
+                  minLength: { value: 2, message: "Minimum 2 characters" },
+                }}
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>City</FormLabel>
@@ -171,7 +192,9 @@ export function AddCustomerDialog({
                   <FormItem>
                     <FormLabel>State</FormLabel>
                     <FormControl>
-                      <select {...field} className="input h-10 w-full rounded-md border px-3 py-2">
+                      <select
+                        {...field}
+                        className="input h-10 w-full rounded-md border px-3 py-2">
                         <option value="">Select state</option>
                         <option value="AC">AC</option>
                         <option value="AL">AL</option>
@@ -213,7 +236,11 @@ export function AddCustomerDialog({
                   <FormItem className="sm:col-span-2">
                     <FormLabel>Country</FormLabel>
                     <FormControl>
-                      <Input {...field} value={field.value || "Brasil"} disabled />
+                      <Input
+                        {...field}
+                        value={field.value || "Brasil"}
+                        disabled
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

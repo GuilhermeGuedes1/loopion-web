@@ -6,10 +6,10 @@ import {
   CardDescription,
   CardHeader,
   CardTitle,
-} from "./ui/card";
-import { Input } from "./ui/input";
-import { Button } from "./ui/button";
-import { Badge } from "./ui/badge";
+} from "../ui/card";
+import { Input } from "../ui/input";
+import { Button } from "../ui/button";
+import { Badge } from "../ui/badge";
 import {
   Table,
   TableBody,
@@ -17,30 +17,30 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-} from "./ui/table";
+} from "../ui/table";
 import { CustomerDetailsDialog } from "./CustomerDetailsDialog";
 import { AddCustomerDialog } from "./AddCustomerDialog";
-import { Skeleton } from "./ui/skeleton";
+import { Skeleton } from "../ui/skeleton";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "./ui/dialog";
-import { Label } from "./ui/label";
+} from "../ui/dialog";
+import { Label } from "../ui/label";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "./ui/select";
+} from "../ui/select";
 import { toast } from "sonner";
-import { getCustomers } from "../../services/customersApi";
-import { createVisit } from "../../services/visitsApi";
-import { CustomerType, MetaType } from "../../types/customers";
-import { openWhatsApp } from "../lib/whatsapp";
+import { getCustomers } from "../../../services/customersApi";
+import { createVisit } from "../../../services/visitsApi";
+import { CustomerType, MetaType } from "../../../types/customers";
+import { openWhatsApp } from "../../lib/whatsapp";
 
 export function CustomersPage() {
   const [customers, setCustomers] = useState<CustomerType[]>([]);
@@ -111,14 +111,14 @@ export function CustomersPage() {
 
   return (
     <div className="space-y-8">
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="mb-3">Customers</h1>
           <p className="text-muted-foreground text-sm">
             Manage your customer base and track engagement
           </p>
         </div>
-        <div className="flex gap-2">
+        <div className="flex flex-wrap gap-2">
           <Button
             onClick={() => setIsAddDialogOpen(true)}
             className="h-10 px-5 bg-accent text-accent-foreground hover:bg-accent/90 font-medium">
@@ -144,7 +144,7 @@ export function CustomersPage() {
                 customers found
               </CardDescription>
             </div>
-            <div className="relative w-80">
+            <div className="relative w-full max-w-full md:w-80">
               <Search className="absolute left-3.5 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
               <Input
                 placeholder="Search customers..."
@@ -156,8 +156,8 @@ export function CustomersPage() {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="rounded-xl border border-border/60 overflow-hidden">
-            <Table>
+          <div className="overflow-x-auto rounded-xl border border-border/60">
+            <Table className="min-w-[780px] md:min-w-full">
               <TableHeader>
                 <TableRow className="hover:bg-transparent border-border/60">
                   <TableHead className="w-[22%] text-xs font-medium text-muted-foreground uppercase tracking-wider">
@@ -172,23 +172,23 @@ export function CustomersPage() {
                     Last Visit
                   </TableHead>
 
-                  <TableHead className="w-[16%] text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  <TableHead className="hidden md:table-cell w-[16%] text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     Created At
                   </TableHead>
 
-                  <TableHead className="w-[14%] text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  <TableHead className="hidden lg:table-cell w-[14%] text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     Days Since Visit
                   </TableHead>
 
-                  <TableHead className="w-[14%] text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  <TableHead className="hidden md:table-cell w-[14%] text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     City
                   </TableHead>
 
-                  <TableHead className="w-[14%] text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  <TableHead className="hidden lg:table-cell w-[14%] text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     State
                   </TableHead>
 
-                  <TableHead className="w-[14%] text-xs font-medium text-muted-foreground uppercase tracking-wider">
+                  <TableHead className="hidden xl:table-cell w-[14%] text-xs font-medium text-muted-foreground uppercase tracking-wider">
                     Country
                   </TableHead>
 
@@ -289,7 +289,7 @@ export function CustomersPage() {
                           )}
                         </TableCell>
 
-                        <TableCell className="text-sm">
+                        <TableCell className="hidden md:table-cell text-sm">
                           {customer.createdAt ? (
                             new Date(customer.createdAt).toLocaleDateString(
                               "en-US",
@@ -304,7 +304,7 @@ export function CustomersPage() {
                           )}
                         </TableCell>
 
-                        <TableCell className="text-sm">
+                        <TableCell className="hidden lg:table-cell text-sm">
                           {customer.lastVisitAt ? (
                             customer.daysSinceLastVisit
                           ) : (
@@ -312,15 +312,15 @@ export function CustomersPage() {
                           )}
                         </TableCell>
 
-                        <TableCell className="text-sm">
+                        <TableCell className="hidden md:table-cell text-sm">
                           {customer.city}
                         </TableCell>
 
-                        <TableCell className="text-sm">
+                        <TableCell className="hidden lg:table-cell text-sm">
                           {customer.state}
                         </TableCell>
 
-                        <TableCell className="text-sm">
+                        <TableCell className="hidden xl:table-cell text-sm">
                           {customer.country}
                         </TableCell>
 
@@ -473,13 +473,15 @@ export function CustomersPage() {
 
                     // Build an ISO timestamp with time (UTC) using the selected date
                     // Use current UTC time for the time component so backend receives full ISO
-                    const [year, month, day] = visitDate.split("-").map(Number);
+                    const [year = 1970, month = 1, day = 1] = visitDate
+                      .split("-")
+                      .map(Number);
                     const now = new Date();
                     const visitedAt = new Date(
                       Date.UTC(
                         year,
-                        (month || 1) - 1,
-                        day || 1,
+                        month - 1,
+                        day,
                         now.getUTCHours(),
                         now.getUTCMinutes(),
                         now.getUTCSeconds(),

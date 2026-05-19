@@ -1,11 +1,10 @@
-import { api } from "./api";
+import { api } from "./axios";
+import { CreateVisitPayload, SuccessResponse } from "../types/visits";
 
-export type CreateVisitPayload = {
-  customerId: string;
-  visitedAt: string; // ISO string with time and timezone, e.g. 2026-05-18T20:00:00.000Z
-};
-
-export const createVisit = async (data: CreateVisitPayload) => {
-  const response = await api.post("/visits/create", data);
+export const createVisit = async (
+  data: CreateVisitPayload,
+): Promise<SuccessResponse> => {
+  const response = await api.post<SuccessResponse>("/visits/create", data);
+  console.log(response.data);
   return response.data;
 };

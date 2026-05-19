@@ -4,18 +4,12 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "./ui/dialog";
-import { Button } from "./ui/button";
-import { Badge } from "./ui/badge";
-import { Separator } from "./ui/separator";
-import {
-  MessageCircle,
-  Phone,
-  Mail,
-  Calendar,
-  TrendingUp,
-} from "lucide-react";
-import { calculateDaysSinceVisit, isEligibleForContact } from "../lib/utils";
+} from "../ui/dialog";
+import { Button } from "../ui/button";
+import { Badge } from "../ui/badge";
+import { Separator } from "../ui/separator";
+import { MessageCircle, Phone, Mail, Calendar, TrendingUp } from "lucide-react";
+import { calculateDaysSinceVisit, isEligibleForContact } from "../../lib/utils";
 
 interface CustomerDetailsDialogProps {
   customer: any;
@@ -60,8 +54,11 @@ export function CustomerDetailsDialog({
             </div>
             <Badge
               variant="secondary"
-              className={needsContact ? "ml-4 bg-accent/10 text-accent border-accent/20" : "ml-4"}
-            >
+              className={
+                needsContact
+                  ? "ml-4 bg-accent/10 text-accent border-accent/20"
+                  : "ml-4"
+              }>
               {needsContact ? "Needs Contact" : "Active"}
             </Badge>
           </div>
@@ -72,7 +69,9 @@ export function CustomerDetailsDialog({
             <div className="space-y-3">
               <div className="flex items-center gap-2.5 text-sm">
                 <Phone className="size-4 text-muted-foreground" />
-                <span className="text-foreground/80 font-mono">{customer.phone}</span>
+                <span className="text-foreground/80 font-mono">
+                  {customer.phone}
+                </span>
               </div>
               <div className="flex items-center gap-2.5 text-sm">
                 <Mail className="size-4 text-muted-foreground" />
@@ -139,7 +138,9 @@ export function CustomerDetailsDialog({
                 Send WhatsApp Message
               </Button>
             )}
-            <Button variant="outline" className="flex-1 h-11 border-border/60 hover:bg-muted/50">
+            <Button
+              variant="outline"
+              className="flex-1 h-11 border-border/60 hover:bg-muted/50">
               <Calendar className="size-4 mr-2" />
               Schedule Visit
             </Button>
