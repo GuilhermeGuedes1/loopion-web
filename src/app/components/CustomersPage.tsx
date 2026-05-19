@@ -38,6 +38,7 @@ import {
 } from "./ui/select";
 import { toast } from "sonner";
 import { getCustomers } from "../../services/customersApi";
+import { createVisit } from "../../services/visitsApi";
 import { CustomerType, MetaType } from "../../types/customers";
 import { openWhatsApp } from "../lib/whatsapp";
 
@@ -55,7 +56,7 @@ export function CustomersPage() {
     setIsLoading(true);
     try {
       const data = await getCustomers(page);
-      setCustomers(data.customersWithBusinessRules);
+      setCustomers(data.data);
 
       const responseMeta = Array.isArray(data.meta) ? data.meta[0] : data.meta;
       setMeta(
@@ -84,12 +85,12 @@ export function CustomersPage() {
   const [visitDate, setVisitDate] = useState(() =>
     new Date().toISOString().slice(0, 10),
   );
-  const [visitDuration, setVisitDuration] = useState("");
-  const [visitNotes, setVisitNotes] = useState("");
+
+  const [isSavingVisit, setIsSavingVisit] = useState(false);
 
   useEffect(() => {
     if (showNewVisitDialog && !visitCustomerId) {
-      const firstCustomer = customers[0];
+      const firstCustomer = (customers ?? [])[0];
       if (firstCustomer) {
         setVisitCustomerId(firstCustomer.id);
       }
@@ -305,14 +306,7 @@ export function CustomersPage() {
 
                         <TableCell className="text-sm">
                           {customer.lastVisitAt ? (
-                            Math.max(
-                              0,
-                              Math.floor(
-                                (Date.now() -
-                                  new Date(customer.lastVisitAt).getTime()) /
-                                  (1000 * 60 * 60 * 24),
-                              ),
-                            ) + " days"
+                            customer.daysSinceLastVisit
                           ) : (
                             <span className="text-muted-foreground">N/A</span>
                           )}
@@ -373,7 +367,7 @@ export function CustomersPage() {
 
           <div className="mt-5 flex items-center justify-between">
             <p className="text-xs text-muted-foreground">
-              Showing {customers.length} of {meta.total} customers (Page{" "}
+              Showing {(customers ?? []).length} of {meta.total} customers (Page{" "}
               {meta.page} of {meta.totalPages})
             </p>
             <div className="flex gap-2">
@@ -433,7 +427,7 @@ export function CustomersPage() {
                   <SelectValue placeholder="Select a customer" />
                 </SelectTrigger>
                 <SelectContent className="border-border bg-popover">
-                  {customers.map((customer) => (
+                  {(customers ?? []).map((customer) => (
                     <SelectItem key={customer.id} value={customer.id}>
                       {customer.name}
                     </SelectItem>
@@ -450,33 +444,8 @@ export function CustomersPage() {
                 id="visit-date"
                 type="date"
                 value={visitDate}
+                max={new Date().toISOString().slice(0, 10)}
                 onChange={(event) => setVisitDate(event.target.value)}
-                className="h-11 bg-input border-border focus-visible:ring-accent"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="visit-duration" className="text-foreground/70">
-                Duration
-              </Label>
-              <Input
-                id="visit-duration"
-                placeholder="e.g., 45 min"
-                value={visitDuration}
-                onChange={(event) => setVisitDuration(event.target.value)}
-                className="h-11 bg-input border-border focus-visible:ring-accent"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="visit-notes" className="text-foreground/70">
-                Notes
-              </Label>
-              <Input
-                id="visit-notes"
-                placeholder="Add any notes about this visit"
-                value={visitNotes}
-                onChange={(event) => setVisitNotes(event.target.value)}
                 className="h-11 bg-input border-border focus-visible:ring-accent"
               />
             </div>
@@ -490,7 +459,8 @@ export function CustomersPage() {
               </Button>
               <Button
                 className="flex-1 h-11 bg-accent text-accent-foreground hover:bg-accent/90 font-medium"
-                onClick={() => {
+                disabled={isSavingVisit}
+                onClick={async () => {
                   if (!visitCustomerId) {
                     toast.error(
                       "Please select a customer before saving the visit.",
@@ -498,13 +468,43 @@ export function CustomersPage() {
                     return;
                   }
 
-                  toast.success("Visit recorded successfully.");
-                  setShowNewVisitDialog(false);
-                  setVisitDuration("");
-                  setVisitNotes("");
-                  setVisitDate(new Date().toISOString().slice(0, 10));
+                  try {
+                    setIsSavingVisit(true);
+
+                    // Build an ISO timestamp with time (UTC) using the selected date
+                    // Use current UTC time for the time component so backend receives full ISO
+                    const [year, month, day] = visitDate.split("-").map(Number);
+                    const now = new Date();
+                    const visitedAt = new Date(
+                      Date.UTC(
+                        year,
+                        (month || 1) - 1,
+                        day || 1,
+                        now.getUTCHours(),
+                        now.getUTCMinutes(),
+                        now.getUTCSeconds(),
+                        now.getUTCMilliseconds(),
+                      ),
+                    ).toISOString();
+
+                    await createVisit({
+                      customerId: visitCustomerId,
+                      visitedAt,
+                    });
+
+                    toast.success("Visit recorded successfully.");
+                    setShowNewVisitDialog(false);
+                    setVisitDate(new Date().toISOString().slice(0, 10));
+                    // reload current page of customers to refresh visits/metadata
+                    loadCustomer(meta.page ?? 1);
+                  } catch (err) {
+                    console.error(err);
+                    toast.error("Erro ao registrar visita. Tente novamente.");
+                  } finally {
+                    setIsSavingVisit(false);
+                  }
                 }}>
-                Save Visit
+                {isSavingVisit ? "Saving..." : "Save Visit"}
               </Button>
             </div>
           </div>

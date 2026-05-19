@@ -49,6 +49,6 @@ export type MetaType = {
 };
 
 export type CustomersApiResponseType = {
-  customersWithBusinessRules: CustomerType[];
+  data: CustomerType[];
   meta: MetaType | MetaType[];
 };
