@@ -44,7 +44,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
         }
 
         const userData = await me();
-        console.log("User data loaded:", userData);
 
         setUser(userData);
       } catch (error) {

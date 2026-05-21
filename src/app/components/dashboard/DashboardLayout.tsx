@@ -21,7 +21,6 @@ const navigation = [{ name: "Customers", href: "/customers", icon: Users }];
 export function DashboardLayout() {
   const location = useLocation();
   const { user, logout } = useAuth();
-  console.log(user);
 
   return (
     <SidebarProvider>
@@ -71,7 +70,9 @@ export function DashboardLayout() {
             <Separator orientation="vertical" className="h-5" />
             <div className="flex-1">
               <div className="flex flex-col gap-1">
-                <p className="text-sm text-muted-foreground">{user?.email}</p>
+                <p className="text-sm text-muted-foreground">
+                  {user?.organizationName}
+                </p>
                 <p className="text-white font-semibold leading-none">
                   Olá, {user?.name}
                 </p>

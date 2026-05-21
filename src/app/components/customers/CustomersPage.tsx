@@ -91,9 +91,6 @@ export function CustomersPage() {
         <CardHeader className="pb-5">
           <div>
             <CardTitle className="text-lg">All Customers</CardTitle>
-            <CardDescription className="text-sm mt-1">
-              customers found
-            </CardDescription>
           </div>
         </CardHeader>
         <CardContent>

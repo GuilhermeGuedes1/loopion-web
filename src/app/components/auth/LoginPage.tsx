@@ -16,6 +16,7 @@ import { useForm } from "react-hook-form";
 import { signIn } from "../../../services/authApi";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../contexts/auth-context";
+import { useState } from "react";
 
 export function LoginPage() {
   const { login } = useAuth();
@@ -31,13 +32,25 @@ export function LoginPage() {
     },
   });
 
+  const [loginError, setLoginError] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+
   const onSubmit = async (data: LoginData) => {
     try {
+      setLoginError("");
+      setIsSubmitting(true);
+
       const response = await signIn(data);
+
       await login(response.access_token);
+
       navigate("/customers");
     } catch (error) {
       console.error("Login error:", error);
+
+      setLoginError("E-mail or password is invalid.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -105,11 +118,12 @@ export function LoginPage() {
                   message={errors.password?.message?.toString()}
                 />
               </div>
-
+              <FormError id="login-error" message={loginError} />
               <Button
                 type="submit"
+                disabled={isSubmitting}
                 className="w-full h-11 bg-accent text-accent-foreground hover:bg-accent/90 font-medium disabled:cursor-not-allowed disabled:opacity-70 cursor-pointer">
-                Sign in
+                {isSubmitting ? "Signing in..." : "Sign in"}
               </Button>
             </form>
           </CardContent>
