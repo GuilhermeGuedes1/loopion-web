@@ -1,5 +1,3 @@
-import { useState } from "react";
-import { useNavigate } from "react-router";
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -10,25 +8,37 @@ import {
   CardHeader,
   CardTitle,
 } from "../ui/card";
+import { FormError } from "../ui/FormError";
+
+import { loginFormValidation } from "../../../validations/auth";
+import type { LoginData } from "../../../types/auth";
+import { useForm } from "react-hook-form";
+import { signIn } from "../../../services/authApi";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../../../contexts/auth-context";
 
 export function LoginPage() {
+  const { login } = useAuth();
   const navigate = useNavigate();
-  const [name, setName] = useState("");
-  const [company, setCompany] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<LoginData>({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+  });
 
-  const handleLogin = (e: React.FormEvent) => {
-    e.preventDefault();
-    localStorage.setItem(
-      "loopinUser",
-      JSON.stringify({
-        name: name || "User Name",
-        company: company || "Loopin Co.",
-        email: email || "user@example.com",
-      }),
-    );
-    navigate("/customers");
+  const onSubmit = async (data: LoginData) => {
+    try {
+      const response = await signIn(data);
+      await login(response.access_token);
+      navigate("/customers");
+    } catch (error) {
+      console.error("Login error:", error);
+    }
   };
 
   return (
@@ -53,36 +63,9 @@ export function LoginPage() {
               Sign in to your account to continue
             </CardDescription>
           </CardHeader>
+
           <CardContent>
-            <form onSubmit={handleLogin} className="space-y-5">
-              <div className="space-y-2">
-                <Label htmlFor="name" className="text-foreground/70">
-                  Name
-                </Label>
-                <Input
-                  id="name"
-                  type="text"
-                  placeholder="Your name"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  className="h-11 bg-input border-border focus-visible:ring-accent"
-                  required
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="company" className="text-foreground/70">
-                  Company
-                </Label>
-                <Input
-                  id="company"
-                  type="text"
-                  placeholder="Your company"
-                  value={company}
-                  onChange={(e) => setCompany(e.target.value)}
-                  className="h-11 bg-input border-border focus-visible:ring-accent"
-                  required
-                />
-              </div>
+            <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
               <div className="space-y-2">
                 <Label htmlFor="email" className="text-foreground/70">
                   Email
@@ -91,12 +74,17 @@ export function LoginPage() {
                   id="email"
                   type="email"
                   placeholder="you@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
                   className="h-11 bg-input border-border focus-visible:ring-accent"
-                  required
+                  aria-invalid={Boolean(errors.email)}
+                  aria-describedby={errors.email ? "email-error" : undefined}
+                  {...register("email", loginFormValidation.email)}
+                />
+                <FormError
+                  id="email-error"
+                  message={errors.email?.message?.toString()}
                 />
               </div>
+
               <div className="space-y-2">
                 <Label htmlFor="password" className="text-foreground/70">
                   Password
@@ -105,15 +93,22 @@ export function LoginPage() {
                   id="password"
                   type="password"
                   placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
                   className="h-11 bg-input border-border focus-visible:ring-accent"
-                  required
+                  aria-invalid={Boolean(errors.password)}
+                  aria-describedby={
+                    errors.password ? "password-error" : undefined
+                  }
+                  {...register("password", loginFormValidation.password)}
+                />
+                <FormError
+                  id="password-error"
+                  message={errors.password?.message?.toString()}
                 />
               </div>
+
               <Button
                 type="submit"
-                className="w-full h-11 bg-accent text-accent-foreground hover:bg-accent/90 font-medium">
+                className="w-full h-11 bg-accent text-accent-foreground hover:bg-accent/90 font-medium disabled:cursor-not-allowed disabled:opacity-70 cursor-pointer">
                 Sign in
               </Button>
             </form>

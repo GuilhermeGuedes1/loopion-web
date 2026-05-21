@@ -14,11 +14,15 @@ import { CustomersTable } from "./CustomersTable";
 import { CustomerPagination } from "./CustomerPagination";
 import { getCustomers } from "../../../services/customersApi";
 import { CustomerType, MetaType } from "../../../types/customers";
-import { openWhatsApp } from "../../lib/whatsapp";
+import { openWhatsApp } from "../../../utils/whatsapp";
 
 export function CustomersPage() {
   const [customers, setCustomers] = useState<CustomerType[]>([]);
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
+  const [showNewVisitDialog, setShowNewVisitDialog] = useState(false);
   const [meta, setMeta] = useState<MetaType>({
     limit: 0,
     page: 1,
@@ -26,10 +30,10 @@ export function CustomersPage() {
     totalPages: 0,
   });
 
-  const loadCustomer = async (page = 1) => {
+  const loadCustomer = async (page = 1, search?: string) => {
     setIsLoading(true);
     try {
-      const data = await getCustomers(page);
+      const data = await getCustomers(page, search);
       setCustomers(data.data);
 
       const responseMeta = Array.isArray(data.meta) ? data.meta[0] : data.meta;
@@ -50,20 +54,25 @@ export function CustomersPage() {
     loadCustomer(1);
   }, []);
 
-  const [isLoading, setIsLoading] = useState(false);
-  const [searchQuery, setSearchQuery] = useState("");
-  const [selectedCustomer, setSelectedCustomer] = useState<any>(null);
-  const [showNewVisitDialog, setShowNewVisitDialog] = useState(false);
+  const handleSearch = () => {
+    loadCustomer(1, searchQuery);
+  };
+
+  const handleSearchKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleSearch();
+    }
+  };
 
   const handlePreviousPage = () => {
     if (meta.page > 1) {
-      loadCustomer(meta.page - 1);
+      loadCustomer(meta.page - 1, searchQuery);
     }
   };
 
   const handleNextPage = () => {
     if (meta.page < meta.totalPages) {
-      loadCustomer(meta.page + 1);
+      loadCustomer(meta.page + 1, searchQuery);
     }
   };
 
@@ -72,6 +81,8 @@ export function CustomersPage() {
       <CustomersToolbar
         searchQuery={searchQuery}
         onSearchQueryChange={setSearchQuery}
+        onSearch={handleSearch}
+        onSearchKeyDown={handleSearchKeyDown}
         onAddCustomer={() => setIsAddDialogOpen(true)}
         onAddVisit={() => setShowNewVisitDialog(true)}
       />
@@ -79,11 +90,11 @@ export function CustomersPage() {
       <Card className="border-border bg-card/50 backdrop-blur-sm">
         <CardHeader className="pb-5">
           <div>
-          <CardTitle className="text-lg">All Customers</CardTitle>
-          <CardDescription className="text-sm mt-1">
-            customers found
-          </CardDescription>
-        </div>
+            <CardTitle className="text-lg">All Customers</CardTitle>
+            <CardDescription className="text-sm mt-1">
+              customers found
+            </CardDescription>
+          </div>
         </CardHeader>
         <CardContent>
           <CustomersTable
@@ -111,14 +122,14 @@ export function CustomersPage() {
       <AddCustomerDialog
         open={isAddDialogOpen}
         onOpenChange={setIsAddDialogOpen}
-        onCreated={loadCustomer}
+        onCreated={() => loadCustomer(1, searchQuery)}
       />
 
       <CreateVisitDialog
         open={showNewVisitDialog}
         onOpenChange={setShowNewVisitDialog}
         customers={customers}
-        onCreated={() => loadCustomer(meta.page ?? 1)}
+        onCreated={() => loadCustomer(meta.page ?? 1, searchQuery)}
       />
     </div>
   );

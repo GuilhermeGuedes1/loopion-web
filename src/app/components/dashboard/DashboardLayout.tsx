@@ -1,4 +1,4 @@
-import { Link, Outlet, useLocation } from "react-router";
+import { Link, Outlet, useLocation } from "react-router-dom";
 import { Users } from "lucide-react";
 import {
   Sidebar,
@@ -13,29 +13,15 @@ import {
   SidebarTrigger,
 } from "../ui/sidebar";
 import { Separator } from "../ui/separator";
+import { useAuth } from "../../../contexts/auth-context";
+import { Button } from "../ui/button";
 
 const navigation = [{ name: "Customers", href: "/customers", icon: Users }];
 
-const fallbackUser = {
-  name: "Guilherme Silva",
-  company: "Loopin Co.",
-  email: "user@example.com",
-};
-
 export function DashboardLayout() {
   const location = useLocation();
-
-  const currentUser = (() => {
-    if (typeof window === "undefined") return fallbackUser;
-    const stored = window.localStorage.getItem("loopinUser");
-    if (!stored) return fallbackUser;
-
-    try {
-      return JSON.parse(stored) as typeof fallbackUser;
-    } catch {
-      return fallbackUser;
-    }
-  })();
+  const { user, logout } = useAuth();
+  console.log(user);
 
   return (
     <SidebarProvider>
@@ -85,14 +71,19 @@ export function DashboardLayout() {
             <Separator orientation="vertical" className="h-5" />
             <div className="flex-1">
               <div className="flex flex-col gap-1">
-                <p className="text-sm text-muted-foreground">
-                  {currentUser.company}
-                </p>
-                <p className="text-base font-semibold leading-none">
-                  Olá, {currentUser.name}
+                <p className="text-sm text-muted-foreground">{user?.email}</p>
+                <p className="text-white font-semibold leading-none">
+                  Olá, {user?.name}
                 </p>
               </div>
             </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={logout}
+              className="text-muted-foreground hover:bg-muted/50 cursor-pointer">
+              Logout
+            </Button>
           </header>
           <main className="flex-1 p-8 max-w-[1600px] w-full mx-auto">
             <Outlet />
