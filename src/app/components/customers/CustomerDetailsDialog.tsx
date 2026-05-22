@@ -4,18 +4,11 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-} from "./ui/dialog";
-import { Button } from "./ui/button";
-import { Badge } from "./ui/badge";
-import { Separator } from "./ui/separator";
-import {
-  MessageCircle,
-  Phone,
-  Mail,
-  Calendar,
-  TrendingUp,
-} from "lucide-react";
-import { calculateDaysSinceVisit, isEligibleForContact } from "../lib/utils";
+} from "../ui/dialog";
+import { Button } from "../ui/button";
+import { Badge } from "../ui/badge";
+import { Separator } from "../ui/separator";
+import { MessageCircle, Phone, Mail, Calendar, TrendingUp } from "lucide-react";
 
 interface CustomerDetailsDialogProps {
   customer: any;
@@ -29,9 +22,6 @@ export function CustomerDetailsDialog({
   onClose,
 }: CustomerDetailsDialogProps) {
   if (!customer) return null;
-
-  const daysSinceVisit = calculateDaysSinceVisit(customer.lastVisit);
-  const needsContact = isEligibleForContact(customer.lastVisit);
 
   const visitHistory = [
     { date: customer.lastVisit, notes: "Regular checkup", duration: "45 min" },
@@ -60,9 +50,12 @@ export function CustomerDetailsDialog({
             </div>
             <Badge
               variant="secondary"
-              className={needsContact ? "ml-4 bg-accent/10 text-accent border-accent/20" : "ml-4"}
-            >
-              {needsContact ? "Needs Contact" : "Active"}
+              className={
+                customer.needsContact
+                  ? "ml-4 bg-accent/10 text-accent border-accent/20"
+                  : "ml-4"
+              }>
+              {customer.needsContact ? "Needs Contact" : "Active"}
             </Badge>
           </div>
         </DialogHeader>
@@ -72,7 +65,9 @@ export function CustomerDetailsDialog({
             <div className="space-y-3">
               <div className="flex items-center gap-2.5 text-sm">
                 <Phone className="size-4 text-muted-foreground" />
-                <span className="text-foreground/80 font-mono">{customer.phone}</span>
+                <span className="text-foreground/80 font-mono">
+                  {customer.phone}
+                </span>
               </div>
               <div className="flex items-center gap-2.5 text-sm">
                 <Mail className="size-4 text-muted-foreground" />
@@ -83,7 +78,7 @@ export function CustomerDetailsDialog({
               <div className="flex items-center gap-2.5 text-sm">
                 <Calendar className="size-4 text-muted-foreground" />
                 <span className="text-foreground/80">
-                  Last visit: {daysSinceVisit} days ago
+                  Last visit: {customer.daysSinceVisit} days ago
                 </span>
               </div>
               <div className="flex items-center gap-2.5 text-sm">
@@ -133,13 +128,15 @@ export function CustomerDetailsDialog({
           <Separator className="bg-border/40" />
 
           <div className="flex gap-3 pt-2">
-            {needsContact && (
+            {customer.needsContact && (
               <Button className="flex-1 h-11 bg-accent text-accent-foreground hover:bg-accent/90 font-medium">
                 <MessageCircle className="size-4 mr-2" />
                 Send WhatsApp Message
               </Button>
             )}
-            <Button variant="outline" className="flex-1 h-11 border-border/60 hover:bg-muted/50">
+            <Button
+              variant="outline"
+              className="flex-1 h-11 border-border/60 hover:bg-muted/50">
               <Calendar className="size-4 mr-2" />
               Schedule Visit
             </Button>

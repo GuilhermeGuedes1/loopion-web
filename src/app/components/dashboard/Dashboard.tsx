@@ -1,7 +1,7 @@
 import { Users, Calendar, MessageSquare, TrendingUp } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "./ui/card";
-import { generateMockCustomers, generateMockVisits, isEligibleForContact, calculateDaysSinceVisit } from "../lib/utils";
-import { Badge } from "./ui/badge";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "../ui/card";
+import { generateMockCustomers, generateMockVisits, isEligibleForContact, calculateDaysSinceVisit } from "../../lib/utils";
+import { Badge } from "../ui/badge";
 
 export function Dashboard() {
   const customers = generateMockCustomers();
