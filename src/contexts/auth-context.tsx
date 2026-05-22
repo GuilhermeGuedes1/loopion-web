@@ -8,7 +8,7 @@ import {
 
 import { saveToken } from "../utils/storage";
 
-import { me } from "../services/authApi";
+import { me } from "../services/authService";
 
 import { getToken, removeToken } from "../utils/storage";
 

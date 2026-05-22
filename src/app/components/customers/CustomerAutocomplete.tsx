@@ -3,7 +3,7 @@ import { ChevronsUpDown } from "lucide-react";
 
 import { Button } from "../ui/button";
 import { Input } from "../ui/input";
-import { api } from "../../../services/axios";
+import { api } from "../../../services/api";
 
 type CustomerOption = {
   id: string;

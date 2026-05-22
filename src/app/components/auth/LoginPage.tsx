@@ -13,7 +13,7 @@ import { FormError } from "../ui/FormError";
 import { loginFormValidation } from "../../../validations/auth";
 import type { LoginData } from "../../../types/auth";
 import { useForm } from "react-hook-form";
-import { signIn } from "../../../services/authApi";
+import { signIn, loginDemo } from "../../../services/authService";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../../contexts/auth-context";
 import { useState } from "react";
@@ -49,6 +49,25 @@ export function LoginPage() {
       console.error("Login error:", error);
 
       setLoginError("E-mail or password is invalid.");
+    } finally {
+      setIsSubmitting(false);
+    }
+  };
+
+  const handleDemoLogin = async () => {
+    try {
+      setLoginError("");
+      setIsSubmitting(true);
+
+      const response = await loginDemo();
+
+      await login(response.accessToken);
+
+      navigate("/customers");
+    } catch (error) {
+      console.error("Demo login error:", error);
+
+      setLoginError("Unable to start demo mode.");
     } finally {
       setIsSubmitting(false);
     }
@@ -119,12 +138,23 @@ export function LoginPage() {
                 />
               </div>
               <FormError id="login-error" message={loginError} />
-              <Button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full h-11 bg-accent text-accent-foreground hover:bg-accent/90 font-medium disabled:cursor-not-allowed disabled:opacity-70 cursor-pointer">
-                {isSubmitting ? "Signing in..." : "Sign in"}
-              </Button>
+              <div className="space-y-3">
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="w-full h-11 bg-accent text-accent-foreground hover:bg-accent/90 font-medium disabled:cursor-not-allowed disabled:opacity-70 cursor-pointer">
+                  {isSubmitting ? "Signing in..." : "Sign in"}
+                </Button>
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  disabled={isSubmitting}
+                  onClick={handleDemoLogin}
+                  className="w-full h-11 cursor-pointer">
+                  Test demo
+                </Button>
+              </div>
             </form>
           </CardContent>
         </Card>

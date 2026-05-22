@@ -1,4 +1,4 @@
-import { api } from "./axios";
+import { api } from "./api";
 import { CreateVisitPayload, SuccessResponse } from "../types/visits";
 
 export const createVisit = async (

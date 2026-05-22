@@ -1,5 +1,5 @@
 import type { LoginData, LoginResponse, MeResponse } from "../types/auth";
-import { api } from "./axios";
+import { api } from "./api";
 import { getToken } from "../utils/storage";
 
 export async function signIn(data: LoginData): Promise<LoginResponse> {
@@ -32,3 +32,11 @@ export async function me(): Promise<MeResponse> {
     throw error;
   }
 }
+
+export async function loginDemo() {
+  const response = await api.post("/auth/demo");
+
+  return response.data;
+}
+
+
