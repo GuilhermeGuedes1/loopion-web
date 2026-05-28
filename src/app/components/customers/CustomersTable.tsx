@@ -120,13 +120,18 @@ export function CustomersTable({
                   </TableCell>
                   <TableCell className="text-sm">
                     {customer.lastVisitAt ? (
-                      new Date(customer.lastVisitAt).toLocaleDateString("en-US", {
-                        year: "numeric",
-                        month: "short",
-                        day: "numeric",
-                      })
+                      new Date(customer.lastVisitAt).toLocaleDateString(
+                        "en-US",
+                        {
+                          year: "numeric",
+                          month: "short",
+                          day: "numeric",
+                        },
+                      )
                     ) : (
-                      <span className="text-muted-foreground">No visits yet</span>
+                      <span className="text-muted-foreground">
+                        No visits yet
+                      </span>
                     )}
                   </TableCell>
                   <TableCell className="hidden md:table-cell text-sm">
@@ -170,21 +175,15 @@ export function CustomersTable({
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-2">
                       <Button
+                        disabled={!customer.canContact && true}
                         size="sm"
-                        variant="ghost"
-                        onClick={() => onSelectCustomer(customer)}
-                        className="h-8 w-8 p-0">
-                        <Eye className="size-4" />
+                        onClick={() =>
+                          onOpenWhatsApp(customer.phone, customer.name)
+                        }
+                        className="h-8 bg-accent text-accent-foreground hover:bg-accent/90 cursor-pointer">
+                        <MessageCircle className="size-3.5 mr-1.5" />
+                        WhatsApp
                       </Button>
-                      {customer.canContact === true && (
-                        <Button
-                          size="sm"
-                          onClick={() => onOpenWhatsApp(customer.phone, customer.name)}
-                          className="h-8 bg-accent text-accent-foreground hover:bg-accent/90 cursor-pointer">
-                          <MessageCircle className="size-3.5 mr-1.5" />
-                          WhatsApp
-                        </Button>
-                      )}
                     </div>
                   </TableCell>
                 </TableRow>

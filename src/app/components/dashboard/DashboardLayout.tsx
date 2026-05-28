@@ -25,13 +25,13 @@ export function DashboardLayout() {
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-background">
-        <Sidebar className="border-r border-border/40">
-          <SidebarContent className="bg-sidebar">
+        <Sidebar>
+          <SidebarContent className="">
             <SidebarGroup>
-              <div className="px-6 py-6 border-b border-border/40">
+              <div className="px-6 py-6">
                 <div className="inline-flex items-center gap-2">
                   <div className="w-7 h-7 rounded-lg bg-accent flex items-center justify-center">
-                    <div className="w-3.5 h-3.5 rounded-full border-2 border-accent-foreground" />
+                    <div className="w-3.5 h-3.5 rounded-full" />
                   </div>
                   <div>
                     <p className="text-base font-semibold tracking-tight">
@@ -65,17 +65,15 @@ export function DashboardLayout() {
         </Sidebar>
 
         <SidebarInset className="flex-1 min-w-0 flex flex-col">
-          <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b border-border/40 bg-background/80 backdrop-blur-xl px-4 sm:px-8">
-            <SidebarTrigger className="-ml-2" />
+          <header className="sticky top-0 z-10 flex h-16 items-center gap-4 bg-background/80 backdrop-blur-xl px-4 sm:px-8">
+            <SidebarTrigger />
             <Separator orientation="vertical" className="h-5" />
             <div className="flex-1">
               <div className="flex flex-col gap-1">
                 <p className="text-sm text-muted-foreground">
                   {user?.organizationName}
                 </p>
-                <p className="text-white font-semibold leading-none">
-                  Olá, {user?.name}
-                </p>
+                <p className="text-white font-semibold">Olá, {user?.name}</p>
               </div>
             </div>
             <Button

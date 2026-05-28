@@ -81,7 +81,7 @@ export function LoginPage() {
             <div className="w-8 h-8 rounded-lg bg-accent flex items-center justify-center">
               <div className="w-4 h-4 rounded-full border-2 border-accent-foreground" />
             </div>
-            <h1 className="text-2xl">Loopin</h1>
+            <h1 className="text-2xl text-white">Loopin</h1>
           </div>
           <p className="text-muted-foreground text-sm">
             Automated customer retention platform
@@ -151,20 +151,13 @@ export function LoginPage() {
                   variant="outline"
                   disabled={isSubmitting}
                   onClick={handleDemoLogin}
-                  className="w-full h-11 cursor-pointer">
+                  className="w-full h-11 cursor-pointer hover:text-white">
                   Test demo
                 </Button>
               </div>
             </form>
           </CardContent>
         </Card>
-
-        <p className="mt-8 text-center text-sm text-muted-foreground">
-          Don't have an account?{" "}
-          <button className="text-accent hover:text-accent/80 font-medium transition-colors">
-            Sign up
-          </button>
-        </p>
       </div>
     </div>
   );
