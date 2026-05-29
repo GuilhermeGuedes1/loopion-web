@@ -28,6 +28,7 @@ export type CustomerType = {
   phone: string;
   state: string;
   updatedAt: string;
+  daysUntilContact: number;
   visits: visits[];
 };
 
