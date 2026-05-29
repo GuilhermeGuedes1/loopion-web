@@ -51,8 +51,8 @@ export function CustomersToolbar({
         <div className="flex flex-wrap gap-2">
           <Button
             onClick={onAddCustomer}
-            className="h-10 px-5 bg-accent text-accent-foreground hover:bg-accent/90 font-medium">
-            <Plus className="size-4 mr-2" />
+            className="h-10 px-5 bg-accent text-accent-foreground hover:bg-accent/90 font-medium cursor-pointer">
+            <Plus className="size-4" />
             Add Customer
           </Button>
           <Button

@@ -7,6 +7,12 @@ import {
   TableHeader,
   TableRow,
 } from "../ui/table";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "../ui/tooltip";
 import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { Skeleton } from "../ui/skeleton";
@@ -174,16 +180,29 @@ export function CustomersTable({
                   </TableCell>
                   <TableCell className="text-right">
                     <div className="flex items-center justify-end gap-2">
-                      <Button
-                        disabled={!customer.canContact && true}
-                        size="sm"
-                        onClick={() =>
-                          onOpenWhatsApp(customer.phone, customer.name)
-                        }
-                        className="h-8 bg-accent text-accent-foreground hover:bg-accent/90 cursor-pointer">
-                        <MessageCircle className="size-3.5 mr-1.5" />
-                        WhatsApp
-                      </Button>
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <span>
+                            <Button
+                              disabled={!customer.canContact}
+                              size="sm"
+                              onClick={() =>
+                                onOpenWhatsApp(customer.phone, customer.name)
+                              }>
+                              <MessageCircle className="size-3.5 mr-1.5" />
+                              WhatsApp
+                            </Button>
+                          </span>
+                        </TooltipTrigger>
+
+                        <TooltipContent>
+                          <p>
+                            {!customer.canContact
+                              ? `Contato disponível em ${customer.daysUntilContact} dias`
+                              : "Abrir conversa no WhatsApp"}
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
                     </div>
                   </TableCell>
                 </TableRow>
