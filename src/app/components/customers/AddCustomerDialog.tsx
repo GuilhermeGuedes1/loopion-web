@@ -20,6 +20,7 @@ import {
 } from "../ui/form";
 import { toast } from "sonner";
 import { createCustomer } from "../../../services/customersApi";
+import { formatPhone, onlyNumbers } from "../../../utils/phone";
 
 export interface AddCustomerFormValues {
   name: string;
@@ -63,7 +64,11 @@ export function AddCustomerDialog({
 
   const onSubmit = async (values: AddCustomerFormValues) => {
     try {
-      await createCustomer(values);
+      await createCustomer({
+        ...values,
+        phone: onlyNumbers(values.phone),
+      });
+
       onCreated();
       onOpenChange(false);
     } catch (error) {
@@ -161,7 +166,13 @@ export function AddCustomerDialog({
                   <FormItem>
                     <FormLabel>Phone</FormLabel>
                     <FormControl>
-                      <Input placeholder="2199912345" {...field} />
+                      <Input
+                        placeholder="(21) 99912-3456"
+                        value={formatPhone(field.value)}
+                        onChange={(event) => {
+                          field.onChange(onlyNumbers(event.target.value));
+                        }}
+                      />
                     </FormControl>
                     <FormMessage />
                   </FormItem>

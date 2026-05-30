@@ -17,6 +17,7 @@ import { Button } from "../ui/button";
 import { Badge } from "../ui/badge";
 import { Skeleton } from "../ui/skeleton";
 import { CustomerType } from "../../../types/customers";
+import { formatPhone } from "../../../utils/phone";
 
 type CustomersTableProps = {
   customers: CustomerType[];
@@ -122,7 +123,7 @@ export function CustomersTable({
                     </div>
                   </TableCell>
                   <TableCell className="text-muted-foreground text-sm">
-                    {customer.phone}
+                    {formatPhone(customer.phone)}
                   </TableCell>
                   <TableCell className="text-sm">
                     {customer.lastVisitAt ? (
@@ -198,8 +199,8 @@ export function CustomersTable({
                         <TooltipContent>
                           <p>
                             {!customer.canContact
-                              ? `Contato disponível em ${customer.daysUntilContact} dias`
-                              : "Abrir conversa no WhatsApp"}
+                              ? `Contact available in ${customer.daysUntilContact} days`
+                              : "Open WhatsApp conversation"}
                           </p>
                         </TooltipContent>
                       </Tooltip>
